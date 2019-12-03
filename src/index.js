@@ -4,82 +4,36 @@ import planck from 'planck-js';
 
 import app from './pixi/pixiapp';
 import loader, { loadResourses } from './pixi/loader';
+import * as tr from './utils/translator';
+import Mouse from './utils/Mouse';
+import Box from './Box';
+import Line from './Line';
 
-const boxes = [];
 const box2d = planck.World({
     gravity: planck.Vec2(0, -9)
 });
+tr.setScreenHeight(app.view.height);
 
-const toWorld = (x)=>{
-    return x * 0.02;
-}
-const toScreen = (x)=>{
-    return x / 0.02;
-}
+const entities = [];
 
-app.view.onmousedown = (e)=>{
-    const scrWidth = 70;
-    const scrHeight = 65;
-    
-    const body = box2d.createDynamicBody({
-        x: toWorld(e.clientX),
-        y: toWorld(app.view.height - e.clientY)
-    })
-    const fixtureDefenition = {
-        density: 0.2,
-        friction: 0.3,
-        restriction: 0.5,
-    }
-    body.createFixture({
-        shape: planck.Box(toWorld(scrWidth/2), toWorld(scrHeight/2)),
-        fixtureDefenition
-    })
-    body.setMassData({
-        mass : 1,
-        center : planck.Vec2(),
-        I : 1
-      })
 
-    const graphics = new PIXI.Graphics();
-    app.stage.addChild(graphics)
-    boxes.push({
-        x: e.clientX, 
-        y: e.clientY,
-        width: scrWidth,
-        height: scrHeight,
-        body,
-        graphics
-    })
-    
-}
 const onLoad = () => {
-    
-
-    var bar = box2d.createBody();
-    bar.createFixture(planck.Edge(planck.Vec2(-20, 5), planck.Vec2(20, 5)));
-    bar.setAngle(0);
-    
+    const line1 = new Line(box2d, 50, app.view.height - app.view.height * 0.2, app.view.width - 50, app.view.height - app.view.height * 0.2);
+    entities.push(line1);
+    app.stage.addChild(line1);
 
     app.ticker.add((delta) => {
-        
+        if(Mouse.isPressed){
+            const box = new Box(box2d, Mouse.position.x, Mouse.position.y, random.int(40, 80), random.int(40, 80))
+            entities.push(box);
+            app.stage.addChild(box);
+        }
+
         box2d.step(1/60);
-
-        boxes.forEach((box)=>{
-            const pos = box.body.getPosition();
-            const { graphics } = box;
-            graphics.clear();
-
-            //угол перевернутый, т.к. верх и низ тоже перевернуты
-            graphics.setTransform(toScreen(pos.x),app.view.height - toScreen(pos.y), 1, 1, -1 * box.body.getAngle())
-            graphics.lineStyle(2, 0xFEEB77, 1);
-            graphics.beginFill(0xf2fbfc);
-     
-            graphics.drawRect(-box.width/2, -box.height/2, box.width, box.height);
-            graphics.endFill();
-            
-           
-        })
-        
+        for(let i_ in entities){
+            const i = parseInt(i_);
+            entities[i].draw();
+        }
     })
 }
 

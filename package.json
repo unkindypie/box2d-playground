@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@babel/core": "^7.6.4",
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
     "@babel/preset-env": "^7.6.3",
     "@pixi/filter-shockwave": "^3.0.3",
     "babel-cli": "^6.26.0",
