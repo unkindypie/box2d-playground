@@ -6,7 +6,6 @@ const app = new PIXI.Application({
     resolution: window.devicePixelRatio,
     backgroundColor: 0xcaf5fa
 });
-
 document.body.appendChild(app.view);
 
 export default app;
