@@ -17,4 +17,5 @@ app.view.onmouseup = (e)=> {
     mouse.isPressed = false;
 }
 
+
 export default mouse;
