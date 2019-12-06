@@ -27,13 +27,29 @@ export default class Ship extends Entity {
 
         this.addChild(this.cabin);
     }
-    move = (force)=>{
+    rotateByTransform = (vec)=>{
+        const {body} = this.cabin;
+        body.setAngularVelocity(0);
+        const desiredAngle = -Math.atan2(vec.x, vec.y);
+        const totalRotation = desiredAngle - body.getAngle();
+        const change = .0174533;
+        const newAngle =  body.getAngle() + Math.min( change, Math.max(-change, totalRotation));
+        body.setTransform(body.getPosition(), newAngle );
+    
+
+    }
+    move = (vec)=>{
+        const {body} = this.cabin;
         const forceTarget = this.cabin.body.getWorldPoint(planck.Vec2(0, tr.yToWorld(60)));
-        
-        this.cabin.body.setLinearVelocity(force, forceTarget);
+        const force = planck.Vec2(Math.cos(body.getAngle()), Math.sin(body.getAngle()));
+
+        this.rotateByTransform(vec);
+
+        this.cabin.body.setLinearVelocity(force);
         //this.cabin.body.applyLinearImpulse(force);
         //this.cabin.body.applyForce(force, forceTarget);
-
+       
+      
     }
     draw = ()=>{
         this.g.clear();
