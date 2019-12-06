@@ -12,12 +12,21 @@ import Pair from './Pair';
 import Ship from './Ship';
 
 const box2d = planck.World({
-    gravity: planck.Vec2(0, -9)
+    gravity: planck.Vec2(0, 0)
 });
 tr.setScreenHeight(app.view.height);
 
 const entities = [];
+const ship = new Ship(box2d, app.view.width/2, app.view.height/2);
+entities.push(ship);
+app.stage.addChild(ship);
 
+let goKeyPressed = false;
+document.documentElement.onkeydown = (e) => {
+    if(e.key === 'w'){
+        goKeyPressed = true;
+    } 
+}
 document.documentElement.onkeyup = (e)=>{
     if(e.code === "Space"){
         const pair = new Pair(box2d, Mouse.position.x, Mouse.position.y);
@@ -25,9 +34,12 @@ document.documentElement.onkeyup = (e)=>{
         app.stage.addChild(pair);
     }
     if(e.key === 'p'){
-        const ship = new Ship(box2d, Mouse.position.x, Mouse.position.y);
-        entities.push(ship);
-        app.stage.addChild(ship);
+        const ship_ = new Ship(box2d, Mouse.position.x, Mouse.position.y);
+        entities.push(ship_);
+        app.stage.addChild(ship_);
+    }
+    if(e.key === 'w'){
+       goKeyPressed = false;
     }
 }
 
@@ -35,13 +47,25 @@ const onLoad = () => {
     const line1 = new Line(box2d, 50, app.view.height - app.view.height * 0.2, app.view.width - 50, app.view.height - app.view.height * 0.2);
     entities.push(line1);
     app.stage.addChild(line1);
-   
+    
 
     app.ticker.add((delta) => {
         if(Mouse.isPressed){
             const box = new Box(box2d, Mouse.position.x, Mouse.position.y, random.int(40, 80), random.int(40, 80))
             entities.push(box);
             app.stage.addChild(box);
+        }
+        if(goKeyPressed){
+            //TODO: используй mouse joint для того, чтобы игрок нормально поворачивал
+            const delta = tr.toWorld(Mouse.position.x, Mouse.position.y).sub(ship.cabin.body.getPosition())
+            if(delta.length() < 0.5){
+                return;
+            }
+            delta.normalize();
+            delta.mul(5)
+            
+            
+            ship.move(delta);
         }
 
         box2d.step(1/60);
