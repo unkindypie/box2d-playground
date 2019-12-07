@@ -24,18 +24,22 @@ export default class Ship extends Entity {
         // this.addChild(this.rightTurbin);
         // this.addChild(this.leftStrap);
         // this.addChild(this.rightStrap);
-
+        
         this.addChild(this.cabin);
+        this.addChild(this.g=new PIXI.Graphics());
     }
     rotateByTransform = (vec)=>{
         const {body} = this.cabin;
         body.setAngularVelocity(0);
         const desiredAngle = -Math.atan2(vec.x, vec.y);
-        const totalRotation = desiredAngle - body.getAngle();
-        const change = .0174533;
+        let totalRotation = desiredAngle - body.getAngle();
+        const change = .0174533 * 2;
+        while ( totalRotation < -180 * .0174533 ) totalRotation += 360 * .0174533;
+        while ( totalRotation >  180 * .0174533 ) totalRotation -= 360 * .0174533;
         const newAngle =  body.getAngle() + Math.min( change, Math.max(-change, totalRotation));
+  
         body.setTransform(body.getPosition(), newAngle );
-    
+        
 
     }
     move = (vec)=>{
@@ -45,7 +49,7 @@ export default class Ship extends Entity {
 
         this.rotateByTransform(vec);
 
-        this.cabin.body.setLinearVelocity(force);
+        //this.cabin.body.setLinearVelocity(force);
         //this.cabin.body.applyLinearImpulse(force);
         //this.cabin.body.applyForce(force, forceTarget);
        
@@ -54,6 +58,13 @@ export default class Ship extends Entity {
     draw = ()=>{
         this.g.clear();
         this.cabin.draw();
+
+        this.g.lineStyle(2, 0xFF00FF, 1);
+        this.g.beginFill(0x650A5A, 0.25);
+        const position = tr.toScreen(this.cabin.body.getWorldPoint(planck.Vec2(0, 1)));
+        this.g.drawCircle(position.x, position.y, 3);
+        this.g.endFill();
+
         
         // this.leftTurbin.draw();
         // this.rightTurbin.draw();

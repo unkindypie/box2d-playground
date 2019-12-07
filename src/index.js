@@ -12,7 +12,7 @@ import Pair from './Pair';
 import Ship from './Ship';
 
 const box2d = planck.World({
-    gravity: planck.Vec2(0, 0)
+    //gravity: planck.Vec2(0, -9)
 });
 tr.setScreenHeight(app.view.height);
 
