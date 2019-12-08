@@ -34,7 +34,7 @@ export default class Box extends Entity {
             center : planck.Vec2(),
             I : 1
           })
-        
+        this.body.setLinearVelocity(planck.Vec2(0,0));        
     }
     draw = ()=>{
         const position = tr.toScreen(this.body.getPosition());

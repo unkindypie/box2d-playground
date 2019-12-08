@@ -40,16 +40,17 @@ document.documentElement.onkeyup = (e)=>{
     }
     if(e.key === 'w'){
        goKeyPressed = false;
+       ship.stop();
     }
 }
-const updateShipMovement = ()=>{
+const updateShipRotation = ()=>{
     const delta = tr.toWorld(Mouse.position.x, Mouse.position.y).sub(ship.cabin.body.getPosition())
     if(delta.length() < 0.5){
         return;
     }
     delta.normalize();
     
-    ship.move(delta);
+    ship.updateRotation(delta);
 }
 const onLoad = () => {
     const line1 = new Line(box2d, 50, app.view.height - app.view.height * 0.2, app.view.width - 50, app.view.height - app.view.height * 0.2);
@@ -63,8 +64,13 @@ const onLoad = () => {
             app.stage.addChild(box);
         }
         if(goKeyPressed){
-           updateShipMovement();
+           ship.move(false);
         }
+        else{
+            ship.move(true);
+        }
+
+        updateShipRotation();
 
         box2d.step(1/60);
         for(let i_ in entities){
