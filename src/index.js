@@ -16,6 +16,11 @@ const box2d = planck.World({
 });
 tr.setScreenHeight(app.view.height);
 
+box2d.on('remove-body', ()=>{
+    console.log('body removed.')
+})
+
+
 const entities = [];
 const ship = new Ship(box2d, app.view.width/2, app.view.height/2);
 entities.push(ship);
@@ -34,9 +39,12 @@ document.documentElement.onkeyup = (e)=>{
         app.stage.addChild(pair);
     }
     if(e.key === 'p'){
-        const ship_ = new Ship(box2d, Mouse.position.x, Mouse.position.y);
-        entities.push(ship_);
-        app.stage.addChild(ship_);
+        box2d.destroyBody(ship.cabin.body);
+        console.log(ship.cabin.body);
+    }
+    if(e.key === 'c'){
+        // box2d.createBody(ship.cabin.body);
+        box2d.createDynamicBody(ship.cabin.body);
     }
     if(e.key === 'w'){
        goKeyPressed = false;
@@ -56,7 +64,7 @@ const onLoad = () => {
     const line1 = new Line(box2d, 50, app.view.height - app.view.height * 0.2, app.view.width - 50, app.view.height - app.view.height * 0.2);
     entities.push(line1);
     app.stage.addChild(line1);
-
+    console.log(planck.Vec2());
     app.ticker.add((delta) => {
         if(Mouse.isPressed){
             const box = new Box(box2d, Mouse.position.x, Mouse.position.y, random.int(40, 80), random.int(40, 80))

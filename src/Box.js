@@ -22,7 +22,7 @@ export default class Box extends Entity {
         const fixtureDefenition = {
             density: 0.2,
             friction: 0.3,
-            restriction: 0.5,
+            restitution: 1,
         }
 
         this.body.createFixture({

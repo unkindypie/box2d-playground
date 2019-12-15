@@ -126,6 +126,7 @@ export default class Ship extends Entity {
         const velChange = force.sub(velocity);
         const impulse = velChange.mul(body.getMass());
         body.applyLinearImpulse(impulse, body.getWorldCenter());
+
     }
     moveByForce = (stop)=> {
         const {body} = this.cabin;
